@@ -24,3 +24,17 @@ Example: As above, timeout 300 seconds
 Example: Connect to 10.0.0.6:3000, use user/pass and get output only from 2 nodes in the cluster
 	aerospike-info-check-time -h 10.0.0.6:3000 -u superman -p crypton -n 10.0.0.5,10.0.0.6 -t 300000 'services'
 ```
+
+## OUTPUT
+```
+Connected in 0.007s
+
+NODE BB9020011AC4202 (127.0.0.1:3000) RESPONDED IN 0.000s:
+172.17.0.3:3000;172.17.0.4:3000
+
+NODE BB9030011AC4202 (172.17.0.3:3000) RESPONDED IN 0.000s:
+172.17.0.4:3000;172.17.0.2:3000
+
+NODE BB9040011AC4202 (172.17.0.4:3000) RESPONDED IN 0.000s:
+172.17.0.3:3000;172.17.0.2:3000
+```
