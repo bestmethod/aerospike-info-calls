@@ -4,6 +4,10 @@
 
 ### NOTE: Does not support TLS
 
+### bin/aerospike-info-check-time <- linux compiled binary, just download, chmod and run
+
+### src/main.go <- golang source code
+
 ## USAGE:
 ```
 Usage: aerospike-info-check-time -h [HOSTNAME[:IP]] [-u USERNAME -p PASSWORD] [-n NODE_IP,NODE_IP,...] [-t TIMEOUT_MS] COMMAND
