@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -151,6 +152,7 @@ func (m *mainStruct) connect() error {
 
 func (m *mainStruct) info() error {
 	nodeList := m.client.GetNodes()
+	var wg sync.WaitGroup
 	for _, node := range nodeList {
 		runNode := false
 		if m.config.nodes != nil {
@@ -163,20 +165,26 @@ func (m *mainStruct) info() error {
 			}
 		}
 		if m.config.nodes == nil || runNode == true {
-			nTime := time.Now()
-			out, err := node.RequestInfo(*m.config.command)
-			infoTime := time.Since(nTime)
-			fmt.Printf("NODE %s (%s:%d) RESPONDED IN %0.3fs:\n", node.GetName(), node.GetHost().Name, node.GetHost().Port, infoTime.Seconds())
-			if err != nil {
-				fmt.Printf("Error running info command: %s\n", err)
-			} else {
-				for _, v := range out {
-					fmt.Println(v)
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				nTime := time.Now()
+				out, err := node.RequestInfo(*m.config.command)
+				infoTime := time.Since(nTime)
+				nout := fmt.Sprintf("NODE %s (%s:%d) RESPONDED IN %0.3fs:\n", node.GetName(), node.GetHost().Name, node.GetHost().Port, infoTime.Seconds())
+				if err != nil {
+					nout = fmt.Sprintf("%sError running info command: %s\n", nout, err)
+				} else {
+					for _, v := range out {
+						nout = fmt.Sprintf("%s%s", nout, fmt.Sprintln(v))
+					}
 				}
-			}
-			fmt.Println()
+				nout = fmt.Sprintf("%s\n", nout)
+				fmt.Print(nout)
+			}()
 		}
 	}
+	wg.Wait()
 	return nil
 }
 
